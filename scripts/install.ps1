@@ -399,7 +399,10 @@ if ((-not [string]::IsNullOrWhiteSpace($TorchBackend)) -and (-not ($VoiceLocal -
     throw "-TorchBackend requires -VoiceLocal or -VoiceAll."
 }
 
-# ponytail: if both passed, skips both. simple.
+if ($ClaudeOnly -and $CodexOnly) {
+    throw "-ClaudeOnly and -CodexOnly are mutually exclusive. Omit both flags to install everything."
+}
+
 if (-not $CodexOnly) {
     Write-Step "Installing Claude Code if missing"
     Install-ClaudeIfMissing

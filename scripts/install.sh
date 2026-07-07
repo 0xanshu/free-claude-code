@@ -287,6 +287,10 @@ parse_args() {
 }
 
 validate_args() {
+    if [ "$install_claude" -eq 0 ] && [ "$install_codex" -eq 0 ]; then
+        fail "--claude-only and --codex-only are mutually exclusive. Omit both flags to install everything."
+    fi
+
     include_local=$voice_local
 
     if [ "$voice_all" -eq 1 ]; then
