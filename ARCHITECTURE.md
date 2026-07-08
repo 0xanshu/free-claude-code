@@ -381,6 +381,11 @@ behavior matches shared transport policy. Provider-specific gateway quirks, such
 as Cohere's supported `reasoning_effort` values, GitHub's API headers/catalog
 filtering, Hugging Face's disabled prior reasoning replay, and unsupported
 compatibility fields, stay in that provider package.
+The OpenAI-chat transport owns standard streamed usage handling: it requests
+`stream_options.include_usage`, consumes provider `prompt_tokens` and
+`completion_tokens` when present, and falls back to local estimates when
+providers omit or reject optional usage metadata. Provider modules only own true
+usage quirks such as DeepSeek prompt-cache counters.
 
 ### Adding A Provider
 
@@ -540,11 +545,14 @@ and native Anthropic Messages transports may receive them.
 Discord and Telegram messaging. Managed task invocations set
 `ANTHROPIC_API_URL`, `ANTHROPIC_BASE_URL`, gateway model discovery,
 non-interactive terminal settings, optional `--resume`, optional
-`--fork-session`, and `--output-format stream-json`. The managed session parser
-extracts persistent Claude session IDs and yields Claude stream-json events to
-the messaging event parser. Managed Claude also owns subprocess stderr
-diagnostic classification so known benign Claude Code notices do not become
-messaging task errors, while unknown stderr remains fatal.
+`--fork-session`, `--model opus`, and `--output-format stream-json`. Messaging
+pins this Claude tier alias so phone sessions route through `MODEL_OPUS` or the
+`MODEL` fallback instead of inheriting a user's interactive `/model` picker
+state. The managed session parser extracts persistent Claude session IDs and
+yields Claude stream-json events to the messaging event parser. Managed Claude
+also owns subprocess stderr diagnostic classification so known benign Claude
+Code notices do not become messaging task errors, while unknown stderr remains
+fatal.
 
 Codex is supported through `fcc-codex` and Codex extensions. FCC does not keep an
 internal managed-Codex session runner because no user-facing messaging setting
